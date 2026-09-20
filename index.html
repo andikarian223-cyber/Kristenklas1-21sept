@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Agama Kristen Kelas 1 SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        quicksand: ['Quicksand', 'sans-serif']
+                    },
+                    colors: {
+                        kidYellow: '#FFDE59',
+                        kidOrange: '#FF914D',
+                        kidPink: '#FF66C4',
+                        kidBlue: '#38B6FF',
+                        kidGreen: '#7ED957',
+                        kidPurple: '#8C52FF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 50%, #fce7f3 100%);
+            min-height: 100vh;
+        }
+        .font-kids {
+            font-family: 'Fredoka', cursive;
+        }
+        .bubbly-button {
+            transition: all 0.2s ease;
+            box-shadow: 0px 6px 0px rgba(0,0,0,0.15);
+        }
+        .bubbly-button:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px rgba(0,0,0,0.15);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+        /* Custom Checkbox Animation */
+        .custom-check:checked + label {
+            border-color: #38B6FF;
+            background-color: #f0f9ff;
+            transform: scale(1.02);
+        }
+        .custom-radio:checked + label {
+            border-color: #FF914D;
+            background-color: #fff7ed;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 antialiased selection:bg-kidYellow">
+
+    <script>
+        // Web Audio API for child-friendly sound effects
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'select') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'fanfare') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.12);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.3);
+                        o.start(now + idx * 0.12);
+                        o.stop(now + idx * 0.12 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio disabled', e);
+            }
+        }
+    </script>
+
+    <header class="bg-white/80 backdrop-blur-md border-b-4 border-kidBlue sticky top-0 z-30 shadow-sm py-3 px-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-kidYellow rounded-2xl flex items-center justify-center text-white text-2xl shadow-md transform -rotate-3">
+                    📖
+                </div>
+                <div>
+                    <h1 class="font-kids font-bold text-lg md:text-xl text-slate-800 leading-tight">Assesmen Sumatif 3</h1>
+                    <p class="text-xs md:text-sm font-semibold text-kidBlue">Pendidikan Agama Kristen - Kelas 1 SD</p>
+                </div>
+            </div>
+            
+            <div id="student-badge" class="hidden flex items-center bg-sky-100 border border-sky-300 rounded-full px-3 py-1 text-xs md:text-sm text-sky-800 font-bold">
+                <i class="fa-solid fa-user-graduate mr-2 text-kidBlue"></i>
+                <span id="badge-name-class">-</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <section id="screen-welcome" class="space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border-4 border-kidYellow relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-100 rounded-full opacity-50 pointer-events-none"></div>
+                <div class="text-center max-w-lg mx-auto">
+                    <span class="inline-block bg-pink-100 text-pink-600 px-4 py-1.5 rounded-full text-sm font-bold mb-3">
+                        <i class="fa-solid fa-star mr-1"></i> Semester 1
+                    </span>
+                    <h2 class="font-kids text-2xl md:text-3xl font-bold text-slate-800 mb-2">Selamat Datang di Kuis Interaktif! 🌟</h2>
+                    <p class="text-slate-600 text-sm md:text-base mb-6">Silakan isi nama lengkap dan kelasmu dulu sebelum memulai kuis ya, Anak Pintar!</p>
+
+                    <form id="form-identity" onsubmit="handleStartQuiz(event)" class="space-y-4 text-left">
+                        <div>
+                            <label class="block font-bold text-slate-700 text-sm mb-1.5">
+                                <i class="fa-solid fa-signature text-kidOrange mr-1"></i> Nama Lengkap Siswa:
+                            </label>
+                            <input type="text" id="input-name" required placeholder="Contoh: Debora Melati" 
+                                class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-kidBlue focus:ring-4 focus:ring-sky-100 outline-none transition text-base font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block font-bold text-slate-700 text-sm mb-1.5">
+                                <i class="fa-solid fa-school text-kidPurple mr-1"></i> Kelas:
+                            </label>
+                            <select id="input-class" required class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 focus:border-kidBlue focus:ring-4 focus:ring-sky-100 outline-none transition text-base font-medium bg-white">
+                                <option value="" disabled selected>Pilih Kelas...</option>
+                                <option value="1-A">Kelas 1-A</option>
+                                <option value="1-B">Kelas 1-B</option>
+                                <option value="1-C">Kelas 1-C</option>
+                                <option value="1-D">Kelas 1-D</option>
+                            </select>
+                        </div>
+
+                        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs md:text-sm text-amber-800 flex items-start space-x-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg mt-0.5"></i>
+                            <div>
+                                <strong>Perhatian:</strong> Kuis ini hanya dapat dikerjakan <span class="underline font-bold">1 kali saja</span>. Pastikan kamu menjawab dengan teliti!
+                            </div>
+                        </div>
+
+                        <button type="submit" onclick="playSound('click')" 
+                            class="w-full bubbly-button bg-kidGreen hover:bg-emerald-500 text-white font-kids font-bold text-lg py-4 rounded-2xl flex items-center justify-center space-x-2 shadow-lg transition">
+                            <span>Mulai Mengerjakan</span>
+                            <i class="fa-solid fa-rocket text-xl"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-quiz" class="hidden space-y-5">
+            <!-- Progress Bar Card -->
+            <div class="bg-white rounded-2xl p-4 card-shadow border-2 border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                    <span id="section-badge" class="bg-kidPurple text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        Bagian I
+                    </span>
+                    <span class="font-kids font-bold text-slate-700 text-sm md:text-base">
+                        Soal <span id="current-q-num" class="text-kidBlue">1</span> dari <span id="total-q-num">15</span>
+                    </span>
+                </div>
+
+                <!-- Progress Track -->
+                <div class="flex-grow max-w-md mx-2">
+                    <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200">
+                        <div id="progress-bar" class="bg-gradient-to-r from-kidBlue to-kidGreen h-full rounded-full transition-all duration-300" style="width: 6.66%;"></div>
+                    </div>
+                </div>
+
+                <div class="text-xs font-bold text-slate-500 text-right">
+                    <span id="answered-count">0</span> Diisi
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border-4 border-sky-200 min-h-[380px] flex flex-col justify-between">
+                <div id="question-container">
+                    <!-- Dynamic Question Content Inserted via JS -->
+                </div>
+
+                <!-- Stepper Action Buttons -->
+                <div class="flex items-center justify-between pt-6 border-t-2 border-slate-100 mt-6">
+                    <button id="btn-prev" onclick="navigateQuestion(-1); playSound('click')" 
+                        class="bubbly-button bg-slate-200 hover:bg-slate-300 text-slate-700 font-kids font-bold px-5 py-2.5 rounded-2xl flex items-center space-x-2 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Sebelumnya</span>
+                    </button>
+
+                    <button id="btn-next" onclick="navigateQuestion(1); playSound('click')" 
+                        class="bubbly-button bg-kidBlue hover:bg-sky-500 text-white font-kids font-bold px-6 py-2.5 rounded-2xl flex items-center space-x-2 transition">
+                        <span>Berikutnya</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <button id="btn-submit" onclick="confirmSubmission(); playSound('click')" 
+                        class="hidden bubbly-button bg-kidOrange hover:bg-orange-500 text-white font-kids font-bold px-6 py-2.5 rounded-2xl flex items-center space-x-2 transition shadow-lg">
+                        <i class="fa-solid fa-check-circle text-lg"></i>
+                        <span>Kumpulkan Jawaban</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-results" class="hidden space-y-6">
+            <!-- Score Overview Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 card-shadow border-4 border-kidGreen text-center relative overflow-hidden">
+                <div class="absolute -top-12 -left-12 w-36 h-36 bg-emerald-100 rounded-full opacity-40"></div>
+                <div class="absolute -bottom-12 -right-12 w-36 h-36 bg-amber-100 rounded-full opacity-40"></div>
+
+                <div class="relative z-10">
+                    <div class="inline-block p-4 bg-emerald-100 rounded-full text-emerald-600 mb-3 text-4xl shadow-sm">
+                        🏆
+                    </div>
+                    <h2 class="font-kids text-2xl md:text-3xl font-bold text-slate-800">Hasil Kuis Selesai!</h2>
+                    <p class="text-slate-600 text-sm md:text-base mt-1">Terima kasih telah mengerjakan dengan baik, <span id="res-student-name" class="font-bold text-kidBlue">--</span>!</p>
+
+                    <!-- Score Badge -->
+                    <div class="my-6 inline-flex flex-col items-center bg-gradient-to-b from-amber-50 to-orange-50 border-2 border-amber-300 rounded-3xl p-6 shadow-md">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Skor Akhir Kamu</span>
+                        <div class="flex items-baseline space-x-1">
+                            <span id="final-score" class="font-kids text-5xl md:text-6xl font-bold text-amber-500">0</span>
+                            <span class="text-slate-400 font-bold text-2xl">/100</span>
+                        </div>
+                        <div id="star-rating" class="text-yellow-400 text-2xl mt-2 space-x-1">
+                            <!-- Dynamic Stars -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback Message -->
+                    <div id="feedback-box" class="p-4 rounded-2xl font-bold text-sm md:text-base mb-6 max-w-md mx-auto">
+                        <!-- Message inserted via JS -->
+                    </div>
+
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-2xl text-xs md:text-sm text-red-700 flex items-center justify-center space-x-2 max-w-md mx-auto mb-6">
+                        <i class="fa-solid fa-lock text-red-500"></i>
+                        <span>Kuis ini telah terkunci. Siswa hanya dapat mengerjakan 1 kali.</span>
+                    </div>
+
+                    <!-- Toggle Detailed Answers Button -->
+                    <button onclick="toggleReview(); playSound('click')" class="bubbly-button bg-slate-800 text-white font-kids font-bold px-6 py-3 rounded-2xl hover:bg-slate-900 transition">
+                        <i class="fa-solid fa-eye mr-2"></i> Lihat Kunci Jawaban & Pembahasan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Review Container -->
+            <div id="review-container" class="hidden bg-white rounded-3xl p-6 md:p-8 card-shadow border-2 border-slate-200 space-y-6">
+                <h3 class="font-kids font-bold text-xl text-slate-800 border-b pb-3 flex items-center">
+                    <i class="fa-solid fa-list-check text-kidPurple mr-2"></i> Pembahasan Jawaban
+                </h3>
+                <div id="review-list" class="space-y-6">
+                    <!-- Dynamic Answer Review Items -->
+                </div>
+            </div>
+
+            <!-- Teacher Reset Option -->
+            <div class="text-center pt-4">
+                <button onclick="teacherResetPrompt()" class="text-xs text-slate-400 hover:text-red-500 underline transition">
+                    <i class="fa-solid fa-key mr-1"></i> Reset Akses Kuis (Khusus Guru / Admin)
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full text-center space-y-4 card-shadow border-4 border-kidOrange animate-bounce-short">
+            <div class="w-16 h-16 bg-orange-100 text-kidOrange rounded-full flex items-center justify-center text-3xl mx-auto">
+                ❓
+            </div>
+            <h3 class="font-kids font-bold text-xl text-slate-800">Yakin Ingin Mengumpulkan?</h3>
+            <p class="text-xs md:text-sm text-slate-600">Pastikan semua soal sudah kamu periksa ya! Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi.</p>
+            
+            <div class="flex space-x-3 pt-2">
+                <button onclick="closeModal()" class="w-1/2 bubbly-button bg-slate-200 text-slate-700 font-kids font-bold py-2.5 rounded-2xl hover:bg-slate-300">
+                    Batal
+                </button>
+                <button onclick="submitQuiz()" class="w-1/2 bubbly-button bg-kidOrange text-white font-kids font-bold py-2.5 rounded-2xl hover:bg-orange-500 shadow-md">
+                    Ya, Kumpulkan!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data extracted carefully from the book page
+        const quizData = [
+            // PART 1: Pilihan Ganda (10 Questions)
+            {
+                id: 1,
+                part: 1,
+                type: 'single',
+                question: '1. Kitab Yakobus 3:10 mengajarkan supaya mulut kita selalu mengeluarkan ....',
+                options: [
+                    { key: 'a', text: 'a. kutuk' },
+                    { key: 'b', text: 'b. berkat' },
+                    { key: 'c', text: 'c. mujizat' }
+                ],
+                correct: 'b',
+                explanation: 'Kitab Yakobus 3:10 mengajarkan agar mulut kita digunakan untuk memuji Tuhan dan mengeluarkan berkat bagi sesama.'
+            },
+            {
+                id: 2,
+                part: 1,
+                type: 'single',
+                question: '2. Debora menggunakan mulutnya untuk memberi ....',
+                options: [
+                    { key: 'a', text: 'a. pujian' },
+                    { key: 'b', text: 'b. nasehat' },
+                    { key: 'c', text: 'c. pertanyaan' }
+                ],
+                correct: 'b',
+                explanation: 'Sebagai seorang hakim perempuan di Israel, Debora menggunakan mulutnya untuk memberikan nasehat dan petunjuk Tuhan.'
+            },
+            {
+                id: 3,
+                part: 1,
+                type: 'single',
+                question: '3. Saat bertemu dengan bapak atau ibu guru kita mengucapkan ....',
+                options: [
+                    { key: 'a', text: 'a. doa' },
+                    { key: 'b', text: 'b. salam' },
+                    { key: 'c', text: 'c. bentakan' }
+                ],
+                correct: 'b',
+                explanation: 'Memberi salam seperti "Selamat pagi, Bu/Pak Guru" adalah contoh sopan santun anak Tuhan.'
+            },
+            {
+                id: 4,
+                part: 1,
+                type: 'single',
+                question: '4. Menggunakan mulut dengan baik berarti berbicara kepada orang lain dengan ....',
+                options: [
+                    { key: 'a', text: 'a. pelan' },
+                    { key: 'b', text: 'b. ramah' },
+                    { key: 'c', text: 'c. sopan' }
+                ],
+                correct: 'c',
+                explanation: 'Mulut yang terpuji digunakan untuk berbicara santun dan sopan kepada siapa saja.'
+            },
+            {
+                id: 5,
+                part: 1,
+                type: 'single',
+                question: '5. Contoh tindakan tidak terpuji yaitu ....',
+                options: [
+                    { key: 'a', text: 'a. mengejek teman' },
+                    { key: 'b', text: 'b. memuji tuhan' },
+                    { key: 'c', text: 'c. mengucapkan salam pada orang lain' }
+                ],
+                correct: 'a',
+                explanation: 'Mengejek teman adalah tindakan buruk/tidak terpuji yang melukai hati orang lain.'
+            },
+            {
+                id: 6,
+                part: 1,
+                type: 'single',
+                question: '6. Kita tidak boleh berkata bohong, tetapi harus berkata ....',
+                options: [
+                    { key: 'a', text: 'a. kasar' },
+                    { key: 'b', text: 'b. jujur' },
+                    { key: 'c', text: 'c. baik' }
+                ],
+                correct: 'b',
+                explanation: 'Anak Tuhan yang baik selalu berkata jujur dan tidak suka berbohong.'
+            },
+            {
+                id: 7,
+                part: 1,
+                type: 'single',
+                question: '7. Hukum Tuhan ke-9 melarang kita untuk berkata ....',
+                options: [
+                    { key: 'a', text: 'a. kasar' },
+                    { key: 'b', text: 'b. keras' },
+                    { key: 'c', text: 'c. dusta' }
+                ],
+                correct: 'c',
+                explanation: 'Hukum Titah ke-9 berbunyi: Jangan mengucapkan saksi dusta tentang sesamamu (dilarang berdusta/bohong).'
+            },
+            {
+                id: 8,
+                part: 1,
+                type: 'single',
+                question: '8. Menurut Salomo, mulut orang benar mengeluarkan ....',
+                options: [
+                    { key: 'a', text: 'a. kutuk' },
+                    { key: 'b', text: 'b. berkat' },
+                    { key: 'c', text: 'c. fitnah' }
+                ],
+                correct: 'b',
+                explanation: 'Raja Salomo mengajarkan bahwa mulut orang benar adalah sumber kehidupan dan mengeluarkan berkat.'
+            },
+            {
+                id: 9,
+                part: 1,
+                type: 'single',
+                question: '9. Saat sekolah minggu, kita memuji Tuhan menggunakan ....',
+                options: [
+                    { key: 'a', text: 'a. mata' },
+                    { key: 'b', text: 'b. mulut' },
+                    { key: 'c', text: 'c. telinga' }
+                ],
+                correct: 'b',
+                explanation: 'Mulut kita ciptaan Tuhan yang indah untuk bernyanyi dan memuji keagungan Tuhan.'
+            },
+            {
+                id: 10,
+                part: 1,
+                type: 'single',
+                question: '10. Perhatikan gambar di bawah! Terhadap teman yang sedang susah, kita memberikan ....',
+                imageSvg: `
+                    <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 my-3 flex flex-col items-center justify-center text-center">
+                        <svg width="180" height="120" viewBox="0 0 200 130" fill="none" xmlns="http://www.w3.org/2000/svg" class="max-w-full">
+                            <!-- Background Floor -->
+                            <rect y="110" width="200" height="20" fill="#E2E8F0"/>
+                            <!-- Friend 1 (Sad/Crying) -->
+                            <circle cx="130" cy="65" r="22" fill="#713F12"/>
+                            <circle cx="130" cy="65" r="20" fill="#FDBA74"/>
+                            <!-- Sad Eyes & Tear -->
+                            <path d="M123 60 Q126 57 129 60" stroke="#431407" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M133 60 Q136 57 139 60" stroke="#431407" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M125 72 Q130 68 135 72" stroke="#431407" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M138 65 Q140 70 138 73" stroke="#38B6FF" stroke-width="2" fill="#38B6FF"/>
+                            <!-- Clothes -->
+                            <path d="M110 110 L120 85 L140 85 L150 110 Z" fill="#1E293B"/>
+
+                            <!-- Friend 2 (Comforting with arm around) -->
+                            <circle cx="70" cy="60" r="22" fill="#1E1B4B"/>
+                            <circle cx="70" cy="60" r="20" fill="#FFEDD5"/>
+                            <!-- Caring Smile -->
+                            <circle cx="64" cy="56" r="2" fill="#431407"/>
+                            <circle cx="74" cy="56" r="2" fill="#431407"/>
+                            <path d="M65 67 Q70 72 75 67" stroke="#431407" stroke-width="2" stroke-linecap="round" fill="none"/>
+                            <!-- Comforting Arm -->
+                            <path d="M70 80 Q100 70 120 78" stroke="#FDBA74" stroke-width="7" stroke-linecap="round" fill="none"/>
+                            <!-- Clothes -->
+                            <path d="M50 110 L60 80 L80 80 L90 110 Z" fill="#FF66C4"/>
+                            <!-- Heart icon above -->
+                            <path d="M100 35 C100 25, 85 25, 85 35 C85 45, 100 52, 100 52 C100 52, 115 45, 115 35 C115 25, 100 25, 100 35 Z" fill="#FF4757"/>
+                        </svg>
+                        <p class="text-xs text-amber-800 font-bold mt-1">Anak yang baik menghibur kawannya yang sedang sedih</p>
+                    </div>
+                `,
+                options: [
+                    { key: 'a', text: 'a. semangat' },
+                    { key: 'b', text: 'b. makanan' },
+                    { key: 'c', text: 'c. penghiburan' }
+                ],
+                correct: 'c',
+                explanation: 'Ketika ada teman yang sedih atau susah, kita harus memberikan penghiburan dan perhatian.'
+            },
+
+            // PART 2: Pilihan Lebih Dari Satu / Centang (5 Questions)
+            {
+                id: 11,
+                part: 2,
+                type: 'multiple',
+                question: '1. Mulut kita berguna untuk .... (Pilih semua yang benar)',
+                options: [
+                    { key: 'a', text: 'berbicara', isCorrect: true },
+                    { key: 'b', text: 'mendengar', isCorrect: false },
+                    { key: 'c', text: 'makan buah', isCorrect: true },
+                    { key: 'd', text: 'membedakan warna', isCorrect: false }
+                ],
+                explanation: 'Mulut berguna untuk berbicara dan makan buah. Mendengar menggunakan telinga, dan membedakan warna menggunakan mata.'
+            },
+            {
+                id: 12,
+                part: 2,
+                type: 'multiple',
+                question: '2. Menggunakan mulut dengan baik yaitu .... (Pilih semua yang benar)',
+                options: [
+                    { key: 'a', text: 'belajar membaca alkitab', isCorrect: true },
+                    { key: 'b', text: 'belajar membaca buku', isCorrect: true },
+                    { key: 'c', text: 'berdoa dan memuji tuhan', isCorrect: true },
+                    { key: 'd', text: 'mengejek teman', isCorrect: false }
+                ],
+                explanation: 'Penggunaan mulut yang baik adalah untuk belajar membaca Alkitab, membaca buku, serta berdoa dan memuji Tuhan.'
+            },
+            {
+                id: 13,
+                part: 2,
+                type: 'multiple',
+                question: '3. Tindakan yang harus kita hindari adalah .... (Pilih semua yang benar)',
+                options: [
+                    { key: 'a', text: 'mengejek teman', isCorrect: true },
+                    { key: 'b', text: 'marah-marah kepada teman', isCorrect: true },
+                    { key: 'c', text: 'berkata bohong', isCorrect: true },
+                    { key: 'd', text: 'memuji teman', isCorrect: false }
+                ],
+                explanation: 'Tindakan tidak baik yang harus dihindari: mengejek teman, marah-marah, dan berkata bohong.'
+            },
+            {
+                id: 14,
+                part: 2,
+                type: 'multiple',
+                question: '14. Cara kita menggunakan mulut yang benar .... (Pilih semua yang benar)',
+                options: [
+                    { key: 'a', text: 'hati-hati dalam menggunakan mulut', isCorrect: true },
+                    { key: 'b', text: 'mengucapkan berkat bagi sesama', isCorrect: true },
+                    { key: 'c', text: 'mengutuki orang lain', isCorrect: false },
+                    { key: 'd', text: 'mengatakan hikmat', isCorrect: true }
+                ],
+                explanation: 'Mulut yang benar digunakan dengan berhati-hati, mengucapkan berkat, dan memperkatakan hikmat Tuhan.'
+            },
+            {
+                id: 15,
+                part: 2,
+                type: 'multiple',
+                question: '15. Sebagai seorang hakim, Debora menggunakan mulutnya untuk .... (Pilih semua yang benar)',
+                options: [
+                    { key: 'a', text: 'memberikan nasihat', isCorrect: true },
+                    { key: 'b', text: 'menghibur umat', isCorrect: true },
+                    { key: 'c', text: 'mengumpat orang lain', isCorrect: false },
+                    { key: 'd', text: 'berkata bohong', isCorrect: false }
+                ],
+                explanation: 'Debora sebagai hakim yang bijaksana memakai mulutnya untuk memberikan nasihat dan menghibur umat Allah.'
+            }
+        ];
+
+        // Application State
+        let currentStudent = { name: '', class: '' };
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // Format: { qId: 'a' } for single or { qId: ['a', 'c'] } for multiple
+
+        // Local Storage Lock Key
+        const STORAGE_KEY = 'PAK_GRADE1_SUMATIF3_RESULTS_V1';
+
+        // Check lock state on window load
+        window.onload = function() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    showSavedResults(parsed);
+                } catch(e) {
+                    console.error('Error parsing stored quiz:', e);
+                }
+            }
+        };
+
+        function handleStartQuiz(event) {
+            event.preventDefault();
+            const name = document.getElementById('input-name').value.trim();
+            const classVal = document.getElementById('input-class').value;
+
+            if (!name || !classVal) {
+                alert('Mohon isi nama dan kelas terlebih dahulu!');
+                return;
+            }
+
+            currentStudent.name = name;
+            currentStudent.class = classVal;
+
+            document.getElementById('badge-name-class').textContent = `${name} (${classVal})`;
+            document.getElementById('student-badge').classList.remove('hidden');
+
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            const q = quizData[currentQuestionIndex];
+            const container = document.getElementById('question-container');
+
+            // Update Headers & Progress
+            document.getElementById('current-q-num').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-q-num').textContent = quizData.length;
+            document.getElementById('section-badge').textContent = q.part === 1 ? 'Bagian I: Pilihan Ganda' : 'Bagian II: Pilih Lebih Dari Satu';
+            document.getElementById('section-badge').className = q.part === 1 ? 'bg-kidPurple text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider' : 'bg-kidOrange text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider';
+
+            const progressPct = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            updateAnsweredCount();
+
+            // Build HTML Content
+            let html = `
+                <div class="mb-4">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                        ${q.type === 'single' ? '📌 Pilih 1 Jawaban Terbaik' : '☑️ Beri Centang Pada Jawaban yang Benar (Bisa > 1)'}
+                    </span>
+                    <h3 class="font-kids font-bold text-lg md:text-xl text-slate-800 leading-snug">
+                        ${q.question}
+                    </h3>
+                </div>
+            `;
+
+            if (q.imageSvg) {
+                html += q.imageSvg;
+            }
+
+            // Options list
+            html += `<div class="space-y-3 mt-4">`;
+
+            if (q.type === 'single') {
+                const selectedVal = userAnswers[q.id] || '';
+                q.options.forEach(opt => {
+                    const isChecked = selectedVal === opt.key ? 'checked' : '';
+                    html += `
+                        <div>
+                            <input type="radio" id="opt-${q.id}-${opt.key}" name="q-${q.id}" value="${opt.key}" ${isChecked} 
+                                onchange="saveAnswer(${q.id}, '${opt.key}', 'single')" class="hidden custom-radio">
+                            <label for="opt-${q.id}-${opt.key}" onclick="playSound('select')"
+                                class="flex items-center p-4 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-sky-300 transition duration-150 font-medium text-slate-700 md:text-base">
+                                <span class="w-6 h-6 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 text-xs text-transparent check-icon">
+                                    <i class="fa-solid fa-check text-white"></i>
+                                </span>
+                                <span>${opt.text}</span>
+                            </label>
+                        </div>
+                    `;
+                });
+            } else if (q.type === 'multiple') {
+                const selectedArr = userAnswers[q.id] || [];
+                q.options.forEach((opt, idx) => {
+                    const isChecked = selectedArr.includes(opt.key) ? 'checked' : '';
+                    html += `
+                        <div>
+                            <input type="checkbox" id="opt-${q.id}-${opt.key}" value="${opt.key}" ${isChecked}
+                                onchange="saveAnswer(${q.id}, '${opt.key}', 'multiple')" class="hidden custom-check">
+                            <label for="opt-${q.id}-${opt.key}" onclick="playSound('select')"
+                                class="flex items-center p-4 border-2 border-slate-200 rounded-2xl cursor-pointer hover:border-sky-300 transition duration-150 font-medium text-slate-700 md:text-base">
+                                <div class="w-6 h-6 rounded-lg border-2 border-slate-300 flex items-center justify-center mr-3 text-sky-500 font-bold text-sm">
+                                    <i class="fa-solid fa-check ${isChecked ? 'block' : 'hidden'}"></i>
+                                </div>
+                                <span>${opt.text}</span>
+                            </label>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            // Nav Buttons State
+            document.getElementById('btn-prev').disabled = (currentQuestionIndex === 0);
+            
+            if (currentQuestionIndex === quizData.length - 1) {
+                document.getElementById('btn-next').classList.add('hidden');
+                document.getElementById('btn-submit').classList.remove('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+                document.getElementById('btn-submit').classList.add('hidden');
+            }
+        }
+
+        function saveAnswer(qId, key, type) {
+            if (type === 'single') {
+                userAnswers[qId] = key;
+            } else if (type === 'multiple') {
+                if (!userAnswers[qId]) userAnswers[qId] = [];
+                const idx = userAnswers[qId].indexOf(key);
+                if (idx > -1) {
+                    userAnswers[qId].splice(idx, 1);
+                } else {
+                    userAnswers[qId].push(key);
+                }
+            }
+            updateAnsweredCount();
+        }
+
+        function updateAnsweredCount() {
+            let count = 0;
+            quizData.forEach(q => {
+                if (q.type === 'single' && userAnswers[q.id]) {
+                    count++;
+                } else if (q.type === 'multiple' && userAnswers[q.id] && userAnswers[q.id].length > 0) {
+                    count++;
+                }
+            });
+            document.getElementById('answered-count').textContent = count;
+        }
+
+        function navigateQuestion(direction) {
+            currentQuestionIndex += direction;
+            if (currentQuestionIndex < 0) currentQuestionIndex = 0;
+            if (currentQuestionIndex >= quizData.length) currentQuestionIndex = quizData.length - 1;
+            renderCurrentQuestion();
+        }
+
+        function confirmSubmission() {
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function submitQuiz() {
+            closeModal();
+
+            // Calculate Score (Max 100)
+            // Part 1: 10 Qs * 5 pts = 50 pts max
+            // Part 2: 5 Qs * 10 pts = 50 pts max
+            let totalScore = 0;
+
+            quizData.forEach(q => {
+                if (q.type === 'single') {
+                    if (userAnswers[q.id] === q.correct) {
+                        totalScore += 5;
+                    }
+                } else if (q.type === 'multiple') {
+                    const userSelected = userAnswers[q.id] || [];
+                    let qCorrectPoints = 0;
+                    // Each question in Part II has 4 choices = 2.5 pts each
+                    q.options.forEach(opt => {
+                        const isChosen = userSelected.includes(opt.key);
+                        if ((opt.isCorrect && isChosen) || (!opt.isCorrect && !isChosen)) {
+                            qCorrectPoints += 2.5;
+                        }
+                    });
+                    totalScore += qCorrectPoints;
+                }
+            });
+
+            // Round score nicely
+            totalScore = Math.round(totalScore);
+
+            const resultPayload = {
+                student: currentStudent,
+                userAnswers: userAnswers,
+                score: totalScore,
+                submittedAt: new Date().toLocaleString('id-ID')
+            };
+
+            // Lock submission by storing in Local Storage
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(resultPayload));
+
+            showSavedResults(resultPayload);
+
+            // Trigger Victory Fanfare & Confetti
+            playSound('fanfare');
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function showSavedResults(data) {
+            currentStudent = data.student;
+            userAnswers = data.userAnswers;
+
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            document.getElementById('badge-name-class').textContent = `${data.student.name} (${data.student.class})`;
+            document.getElementById('student-badge').classList.remove('hidden');
+
+            document.getElementById('res-student-name').textContent = data.student.name;
+            document.getElementById('final-score').textContent = data.score;
+
+            // Star rating & Feedback message
+            const starBox = document.getElementById('star-rating');
+            const feedbackBox = document.getElementById('feedback-box');
+
+            if (data.score >= 85) {
+                starBox.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+                feedbackBox.className = 'p-4 rounded-2xl font-bold text-sm md:text-base mb-6 max-w-md mx-auto bg-emerald-100 text-emerald-800 border border-emerald-300';
+                feedbackBox.innerHTML = '🌟 <strong>LUAR BIASA!</strong> Kamu adalah Anak Tuhan yang sungguh rajin dan pintar!';
+            } else if (data.score >= 65) {
+                starBox.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>';
+                feedbackBox.className = 'p-4 rounded-2xl font-bold text-sm md:text-base mb-6 max-w-md mx-auto bg-sky-100 text-sky-800 border border-sky-300';
+                feedbackBox.innerHTML = '👍 <strong>BAGUS SEKALI!</strong> Terus tingkatkan semangat belajarmu ya!';
+            } else {
+                starBox.innerHTML = '<i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>';
+                feedbackBox.className = 'p-4 rounded-2xl font-bold text-sm md:text-base mb-6 max-w-md mx-auto bg-amber-100 text-amber-800 border border-amber-300';
+                feedbackBox.innerHTML = '💪 <strong>TETAP SEMANGAT!</strong> Rajin membaca Alkitab dan belajar lagi bersama Papa & Mama ya!';
+            }
+
+            renderReviewList();
+        }
+
+        function renderReviewList() {
+            const listContainer = document.getElementById('review-list');
+            let html = '';
+
+            quizData.forEach((q, idx) => {
+                let isFullyCorrect = false;
+
+                if (q.type === 'single') {
+                    isFullyCorrect = (userAnswers[q.id] === q.correct);
+                } else {
+                    const userSelected = userAnswers[q.id] || [];
+                    const correctKeys = q.options.filter(o => o.isCorrect).map(o => o.key);
+                    isFullyCorrect = (userSelected.length === correctKeys.length) && 
+                        userSelected.every(k => correctKeys.includes(k));
+                }
+
+                html += `
+                    <div class="p-4 md:p-5 rounded-2xl border-2 ${isFullyCorrect ? 'border-emerald-200 bg-emerald-50/50' : 'border-rose-200 bg-rose-50/50'} space-y-3">
+                        <div class="flex items-start justify-between gap-2">
+                            <h4 class="font-bold text-slate-800 text-sm md:text-base">
+                                ${q.question}
+                            </h4>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isFullyCorrect ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}">
+                                ${isFullyCorrect ? '✓ Benar' : '✗ Kurang Tepat'}
+                            </span>
+                        </div>
+                `;
+
+                if (q.type === 'single') {
+                    const userChoice = userAnswers[q.id] ? q.options.find(o => o.key === userAnswers[q.id])?.text : 'Tidak dijawab';
+                    const correctOption = q.options.find(o => o.key === q.correct)?.text;
+
+                    html += `
+                        <div class="text-xs md:text-sm space-y-1">
+                            <p class="text-slate-600">Jawabanmu: <span class="font-bold ${isFullyCorrect ? 'text-emerald-700' : 'text-rose-600'}">${userChoice}</span></p>
+                            ${!isFullyCorrect ? `<p class="text-slate-600">Jawaban Benar: <span class="font-bold text-emerald-700">${correctOption}</span></p>` : ''}
+                        </div>
+                    `;
+                } else {
+                    const userSelectedArr = userAnswers[q.id] || [];
+                    html += `<div class="text-xs md:text-sm space-y-1.5"><p class="text-slate-600 font-bold">Detail Jawaban:</p><ul class="grid grid-cols-1 md:grid-cols-2 gap-2">`;
+
+                    q.options.forEach(opt => {
+                        const userChecked = userSelectedArr.includes(opt.key);
+                        const isRightChoice = (opt.isCorrect && userChecked) || (!opt.isCorrect && !userChecked);
+
+                        html += `
+                            <li class="p-2 rounded-lg border text-xs ${isRightChoice ? 'bg-emerald-100/70 border-emerald-300 text-emerald-900' : 'bg-rose-100/70 border-rose-300 text-rose-900'}">
+                                ${userChecked ? '☑️' : '☐'} ${opt.text} 
+                                ${opt.isCorrect ? '<span class="font-bold text-emerald-700">(Seharusnya Dicentang)</span>' : '<span class="text-slate-500">(Tidak Dicentang)</span>'}
+                            </li>
+                        `;
+                    });
+
+                    html += `</ul></div>`;
+                }
+
+                html += `
+                    <div class="p-3 bg-white/80 rounded-xl border border-slate-200 text-xs text-slate-600">
+                        <strong class="text-kidBlue"><i class="fa-solid fa-lightbulb"></i> Pembahasan:</strong> ${q.explanation}
+                    </div>
+                </div>`;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        function toggleReview() {
+            const rev = document.getElementById('review-container');
+            rev.classList.toggle('hidden');
+            if (!rev.classList.contains('hidden')) {
+                rev.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function teacherResetPrompt() {
+            const pass = prompt('Masukkan Kode Sandi Guru untuk mereset kuis:');
+            if (pass === '1234' || pass === 'guru') {
+                if (confirm('Apakah Anda yakin ingin menghapus hasil dan mereset kuis ini? Siswa dapat mengerjakan ulang.')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    location.reload();
+                }
+            } else if (pass !== null) {
+                alert('Sandi salah! Hanya guru yang dapat mereset.');
+            }
+        }
+    </script>
+</body>
+</html>
